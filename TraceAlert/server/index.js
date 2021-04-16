@@ -1,71 +1,51 @@
-// Start the server by running "node index.js" from the "server" directory
+const firebase = require('firebase')
+require("firebase/firestore");
 
-const express = require('express')
-const app = express()
-const mongo = require('mongodb')
 
-const MongoClient = mongo.MongoClient
-// the place where the database is stored. 
-// Currently the server is localhost
-const dbUrl = 'mongodb://localhost'
-// db is initialised when connecting to database, and will be used for database operations
-let db
+// Firebase configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyCyAHMfKLXjp9bpxEkBH0vS6dux21HKTJ0",
+    authDomain: "tracealert-94669.firebaseapp.com",
+    databaseURL: "https://tracealert-94669-default-rtdb.firebaseio.com",
+    projectId: "tracealert-94669",
+    storageBucket: "tracealert-94669.appspot.com",
+    messagingSenderId: "529576902686",
+    appId: "1:529576902686:web:e1b9e70671527112cfae0f"
+};
 
-MongoClient.connect(dbUrl, (err, client) => {
-    if (err)  throw err
-    // the name of the database is "tracealert"
-    db = client.db('tracealert')
-    // the server is listening on port 3000.
-    app.listen(3000, () => console.log('Server listening on 3000'))
-})
+// Initialize Firebase and Firestore
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
 
 
 
-/*
-*** User information resides in the collection named "users"
-* One user per document in "users" collection
-
-*** User should be an object in this format:
-{
-    _id: "",
-    firstname: "",
-    surname: "",
-    dateOfBirth: new Date(1990, 0, 1),
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    atRisk: false,
-    placesAndContacts: [
-        {
-            location: {
-                name: "University of Adelaide",
-                city: "Adelaide",
-                state: "SA",
-                preciseLocation: "Near Ingkarni Wardli",
-            },
-            time: new Date(),
-            contacts: [],
-        },
-        {...},
-        {...},
-    ]
+// userId: the unique _id used to identify the user in database
+// atRisk: boolean value for indicating whether the user is of high risk
+function updateRiskStatus(userId, atRisk){
+    
 }
-*** Note:
- * _id: this does not neet to be provided at first; the databse will randomly generate one;
- * dateOfBirth: a Date object for storing the date of birth. Month is represented as 0-11.
- * placesAndContacts: an array of places the user has been to since 2 weeks ago; "contacts" property stores an array of unique _ids, which are the _ids of the direct contacts which are also users of TraceAlert
-*/
 
-// Add new user as a document into database
-function createNewUser(user){
-    db.collection('users').insert(user, (err, doc) => {
+
+// **** Run every 24 hours ****
+function deleteAllOutdatedLocations(){
+
+}
+
+
+function deleteOutdatedLocation(userId){
+    let user = db.collection('users').findOne({_id: userId})
+    let places = user.placesAndContacts
+    let today = Date.now()
+    let newPlaces = places.filter((place) => {
+        const msPassed = Math.abs(today - place.time)
+        const daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
+        return daysPassed > 14
+    })
+    db.collection('users').updateOne({_id: userId}, {$set: {placesAndContacts: newPlaces}}, (err, res) => {
         if (err){
-            console.log("Error occurred when creating a new user in database: " + err)
+            console.log('Error occurred when deleting outdated locations: ' + err)
         } else {
-            console.log('New user created. The ID generated is: ' + doc._id)
+            console.log(`Outdated locations deleted!`)
         }
     })
 }
