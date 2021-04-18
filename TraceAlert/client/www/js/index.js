@@ -26,4 +26,8 @@ function onDeviceReady() {
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
+
+    // login
+    // login('123456789@gmail.com', '123456')
+
 }

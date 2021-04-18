@@ -57,6 +57,7 @@ function createNewUser(user){
             which will be automatically created when inserting the first location */
         }).then(() => {
             console.log('created!')
+            return userToken
         }).catch(err => {
             console.log('Error occurred when creating the account')
         })
@@ -74,36 +75,19 @@ function login(email, password){
     .then((userCredential) => {
         // Signed in
         currentUser = userCredential.user
+        alert('Signed in!')
         console.log('Signed in!')
-        // delete later!
-        addNewContact({
-            locationInfo: {
-                name: "University of Adelaide",
-                city: "Adelaide",
-                state: "SA",
-            },
-            contact: [
-                {
-                    contactId: 'eqTHtJOmfFU4sAZfwMoF',
-                    time: new Date(),
-                    preciseLocation: "Near Ingkarni Wardli",
-                },
-                {
-                    contactId: 'sKZIBzTHrdt9q2hdpPjC',
-                    time: new Date(2021, 1, 1),
-                    preciseLocation: "Near Elder Hall",
-                }
-            ]
-        })
+        getUserInfo()
     })
     .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(`Error occurred when logging in: ${errorMessage}`)
+        console.log(`Error occurred when logging in: ${errorMessage}, error code: ${errorCode}`)
+        alert(errorMessage)
     });
 }
 
-login('123456789@gmail.com', '123456')
+// login('123456789@gmail.com', '123456')
 
 /*
     let contact = {
@@ -158,64 +142,18 @@ function addNewContact(contact){
     })
 }
 
-// returns a Promise
-function getUserInfo() {
-    return new Promise((resolve, reject) => {
-        db.collection('users').doc(currentUser.uid).get()
-        .then(doc => {
-            let record = doc.data()
-            let userInfo = {
-                firstname: record.firstname,
-                surname: record.surname,
-                dateOfBirth: record.dateOfBirth,
-                phone: record.phone,
-                email: record.email,
-                address: record.address,
-                city: record.city,
-                state: record.state,
-                postalCode: record.postalCode,
-            }
-            resolve(userInfo)
-        }).catch(err => {
-            console.log(err)
-            reject(err)
-        })
-    })
-}
-
-// return a list of locations and contacts in each individual location
-// function returns a promise
-function getContacts(){
-    return new Promise((resolve, reject) => {
-        db.collection('users').doc(currentUser.uid).collection('placesAndContacts').get()
-        .then(querySnapshot => {
-            let contacts = querySnapshot.docs.map(doc => {
-                return doc.data()
-            })
-            console.log(contacts)
-            resolve(contacts)
-        }).catch(err => {
-            console.log('Error occurred when getting contacts: ' + err)
-            reject(err)
-        })
-    })
-}
-
-// count the total number of contacts in the last 14 days
-// function returns a promise
-function countContacts(){
-    return new Promise((resolve, reject) => {
-        db.collection('users').doc(currentUser.uid).collection('placesAndContacts').get()
-        .then(querySnapshot => {
-            let numberOfContacts = 0
-            querySnapshot.forEach(doc => {
-                numberOfContacts += doc.data().contact.length
-            })
-            console.log(numberOfContacts)
-            resolve(numberOfContacts)
-        }).catch(err => {
-            console.log('Error occurred when counting the total number of contacts: ' + err)
-            reject(err)
-        })
+function getUserInfo(){
+    db.collection('users').doc(currentUser.uid).get()
+    .then(doc => {
+        let record = doc.data()
+        let userInfo = {
+            firstname: record.firstname,
+            surname: record.surname,
+            phone: record.phone,
+        }
+        alert(userInfo.firstname + ' ' + userInfo.surname)
+        return userInfo
+    }).catch(err => {
+        console.log(err)
     })
 }

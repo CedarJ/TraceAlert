@@ -22,30 +22,91 @@ var db = firebase.firestore();
 // userId: the unique _id used to identify the user in database
 // atRisk: boolean value for indicating whether the user is of high risk
 function updateRiskStatus(userId, atRisk){
-    
+    db.collection('users').doc(userId)
+    .update({atRisk: atRisk})
+    .then(() => {
+        console.log(`Risk status of user ${userId} updated to: ${atRisk ? 'dangerous' : 'safe'}`)
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating user's risk status: ${err}`)
+    })
 }
 
 
 // **** Run every 24 hours ****
-function deleteAllOutdatedLocations(){
-
+function updateRiskParameters(riskLevel, threshold, tiers){
+    db.collection('risk_status').doc('parameters')
+    .update({
+        risk_level: riskLevel,
+        threshold: threshold,
+        tiers: tiers
+    })
+    .then(() => {
+        console.log('Risk parameters successfully updated!')
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating risk parameters: ${err}`)
+    })
 }
 
 
-function deleteOutdatedLocation(userId){
-    let user = db.collection('users').findOne({_id: userId})
-    let places = user.placesAndContacts
-    let today = Date.now()
-    let newPlaces = places.filter((place) => {
-        const msPassed = Math.abs(today - place.time)
-        const daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
-        return daysPassed > 14
+// **** Run every 24 hours ****
+deleteAllOutdatedContacts()
+function deleteAllOutdatedContacts(){
+    db.collection('users').get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            deleteOutdatedContacts(doc.id)
+            .then(count => {
+                console.log(count + ' outdated contacts deleted for user ' + doc.id)
+            })
+            .catch(err => {
+                console.log(`Error occurred when deleting outdated contacts for user ${doc.id}: ${err}`)
+            })
+        })
     })
-    db.collection('users').updateOne({_id: userId}, {$set: {placesAndContacts: newPlaces}}, (err, res) => {
-        if (err){
-            console.log('Error occurred when deleting outdated locations: ' + err)
-        } else {
-            console.log(`Outdated locations deleted!`)
-        }
+}
+
+
+function deleteOutdatedContacts(userId){
+    let today = new Date()
+    console.log(`Processing user ${userId}...`)
+    return new Promise((resolve, reject) => {
+        db.collection('users').doc(userId).collection('placesAndContacts').get()
+        .then(querySnapshot => {
+            let countDeleted = 0
+            querySnapshot.forEach(doc => {
+                let newContact = []
+                doc.data().contact.forEach(e => {
+                    let timestamp = e.time.toDate()
+                    console.log(timestamp)
+                    let msPassed = Math.abs(today - timestamp)
+                    console.log(`msPassed: ${msPassed}`)
+                    let daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
+                    if (daysPassed > 14){
+                        console.log(`Days passed: ${daysPassed}`)
+                        countDeleted += 1
+                    } else {
+                        newContact.push(e)
+                    }
+                })
+                if (newContact.length == 0){
+                    db.collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    .delete()
+                    .catch(err => {
+                        reject(err)
+                    })
+                } else {
+                    db.collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    .update({contact: newContact})
+                    .catch(err => {
+                        reject(err)
+                    })
+                }
+            })
+            resolve(countDeleted)
+        })
+        .catch(err => {
+            reject(err)
+        })
     })
 }
