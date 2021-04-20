@@ -103,7 +103,19 @@ function login(email, password){
     });
 }
 
-login('123456789@gmail.com', '123456')
+// login('123456789@gmail.com', '123456')
+createNewUser({
+    firstname: "Molly",
+    surname: "Ssss",
+    dateOfBirth: new Date(1991, 0, 1),
+    phone: "123456789",
+    email: "1111111@gmail.com",
+    password: "123456",
+    address: "211 Grote Street",
+    city: "Adelaide",
+    state: "SA",
+    postalCode: "5000",
+})
 
 /*
     let contact = {

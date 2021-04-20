@@ -1,6 +1,7 @@
 const firebase = require('firebase')
 require("firebase/firestore");
-
+// require('firebase/auth')
+let admin = require('firebase-admin')
 
 // Firebase configuration
 var firebaseConfig = {
@@ -13,16 +14,19 @@ var firebaseConfig = {
     appId: "1:529576902686:web:e1b9e70671527112cfae0f"
 };
 
-// Initialize Firebase and Firestore
+// Initialize Firebase and Admin SDK
 firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
+var serviceAccount = require("./tracealert-94669-firebase-adminsdk-8o5ym-907dfde87e.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 
 
 // userId: the unique _id used to identify the user in database
 // atRisk: boolean value for indicating whether the user is of high risk
 function updateRiskStatus(userId, atRisk){
-    db.collection('users').doc(userId)
+    admin.firestore().collection('users').doc(userId)
     .update({atRisk: atRisk})
     .then(() => {
         console.log(`Risk status of user ${userId} updated to: ${atRisk ? 'dangerous' : 'safe'}`)
@@ -35,7 +39,7 @@ function updateRiskStatus(userId, atRisk){
 
 // **** Run every 24 hours ****
 function updateRiskParameters(riskLevel, threshold, tiers){
-    db.collection('risk_status').doc('parameters')
+    admin.firestore().collection('risk_status').doc('parameters')
     .update({
         risk_level: riskLevel,
         threshold: threshold,
@@ -51,9 +55,8 @@ function updateRiskParameters(riskLevel, threshold, tiers){
 
 
 // **** Run every 24 hours ****
-deleteAllOutdatedContacts()
 function deleteAllOutdatedContacts(){
-    db.collection('users').get().then(querySnapshot => {
+    admin.firestore().collection('users').get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
             deleteOutdatedContacts(doc.id)
             .then(count => {
@@ -71,7 +74,7 @@ function deleteOutdatedContacts(userId){
     let today = new Date()
     console.log(`Processing user ${userId}...`)
     return new Promise((resolve, reject) => {
-        db.collection('users').doc(userId).collection('placesAndContacts').get()
+        admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
         .then(querySnapshot => {
             let countDeleted = 0
             querySnapshot.forEach(doc => {
@@ -90,13 +93,13 @@ function deleteOutdatedContacts(userId){
                     }
                 })
                 if (newContact.length == 0){
-                    db.collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    admin.firestore().collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
                     .delete()
                     .catch(err => {
                         reject(err)
                     })
                 } else {
-                    db.collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    admin.firestore().collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
                     .update({contact: newContact})
                     .catch(err => {
                         reject(err)
