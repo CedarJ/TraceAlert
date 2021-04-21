@@ -81,9 +81,7 @@ function deleteOutdatedContacts(userId){
                 let newContact = []
                 doc.data().contact.forEach(e => {
                     let timestamp = e.time.toDate()
-                    console.log(timestamp)
                     let msPassed = Math.abs(today - timestamp)
-                    console.log(`msPassed: ${msPassed}`)
                     let daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
                     if (daysPassed > 14){
                         console.log(`Days passed: ${daysPassed}`)
@@ -110,6 +108,40 @@ function deleteOutdatedContacts(userId){
         })
         .catch(err => {
             reject(err)
+        })
+    })
+}
+
+
+// return a list of uid of all direct contacts
+function getDirectContacts(userId){
+    let contacts = {}
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
+        .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                doc.data().contact.forEach(c => {
+                    contacts[c.contactId] = 1
+                })
+            })
+            resolve(Object.keys(contacts))
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+
+function getRiskStatus(userId){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId).get()
+        .then(doc => {
+            console.log(doc.data().atRisk)
+            resolve(doc.data().atRisk)
+        })
+        .catch(err => {
+            reject('Error occurred when getting risk status: ' + err)
         })
     })
 }
