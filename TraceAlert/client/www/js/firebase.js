@@ -20,8 +20,6 @@ let currentUser
 let userEmail
 let userPassword
 
-login('123456789@gmail.com', '123456')
-
 // Function for creating an account
 /*
     user format:
