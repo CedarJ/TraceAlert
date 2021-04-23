@@ -26,7 +26,18 @@ function onDeviceReady() {
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
-
-    // login
-    login('123456789@gmail.com', '123456')
+    bluetoothle.initialize(initializeResult, {
+        "request": true,
+        "statusReceiver": false,
+        "restoreKey" : "tracealert"
+    }).then(state => {
+        if (state == 'enabled'){
+            alert('bluetooth enabled!')
+        } else {
+            alert('bluetooth disabled')
+        }
+    })
+    .catch(err => {
+        alert(err)
+    })
 }

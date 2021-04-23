@@ -1,6 +1,5 @@
 const firebase = require('firebase')
 require("firebase/firestore");
-// require('firebase/auth')
 let admin = require('firebase-admin')
 
 // Firebase configuration
@@ -22,6 +21,29 @@ admin.initializeApp({
 });
 
 
+function setRiskyWeight(userId, weight){
+    admin.firestore().collection('users').doc(userId)
+    .update({riskyWeight: weight})
+    .then(() => {
+        console.log(`riskyWeight of user ${userId} successfully updated!`)
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating user's riskyWeight: ${err}`)
+    })
+}
+
+function getRiskyWeight(userId){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId)
+        .get()
+        .then(doc => {
+            resolve(doc.data().riskyWeight)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
 
 // userId: the unique _id used to identify the user in database
 // atRisk: boolean value for indicating whether the user is of high risk
@@ -104,6 +126,16 @@ function deleteOutdatedContacts(userId){
                     })
                 }
             })
+            // update contactCount field
+            if (countDeleted != 0){
+                admin.firestore().collection('users').doc(userId).update("contactCount", firebase.firestore.FieldValue.increment(-countDeleted))
+                .then(() => {
+                    console.log('contactCount successfully updated!')
+                })
+                .catch(err => {
+                    console.log('Error occurred when updating contactCount')
+                })
+            }
             resolve(countDeleted)
         })
         .catch(err => {
