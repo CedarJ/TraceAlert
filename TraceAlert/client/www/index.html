@@ -39,16 +39,23 @@
         <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
         <link rel="stylesheet" href="css/index.css">
-        <title>Hello World</title>
+        <title>Hello World</title> 
     </head>
     <body>
         <div class="app">
-            <h1>Apache Cordova</h1>
+            <h1>Geolocation</h1>
             <div id="deviceready" class="blink">
                 <p class="event listening">Connecting to Device</p>
                 <p class="event received">Device is Ready</p>
             </div>
         </div>
+        <script src="js/location.js"></script>
+        <div class="location">
+            <br />
+            <p id="geolocation">Location</p>
+            <p id="geocode">Address</p>
+        </div>
+        <!--script src="js/bluetooth2.js"></script-->
         <script src="cordova.js"></script>
         <script src="js/index.js"></script>
         <script src="js/firebase.js"></script>
