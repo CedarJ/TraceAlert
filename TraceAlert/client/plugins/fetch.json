@@ -6,5 +6,65 @@
     },
     "is_top_level": true,
     "variables": {}
+  },
+  "cordova-plugin-geolocation": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-geolocation@^4.1.0"
+    },
+    "is_top_level": true,
+    "variables": {
+      "GPS_REQUIRED": "false"
+    }
+  },
+  "cordova-plugin-bluetoothle": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-bluetoothle@6.3.1"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-background-mode-bluetooth-central": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-background-mode-bluetooth-central"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-background-mode-bluetooth-peripheral": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-background-mode-bluetooth-peripheral"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-bluetooth-peripheral-usage-description": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-bluetooth-peripheral-usage-description@^1.0.1"
+    },
+    "is_top_level": true,
+    "variables": {
+      "TEXT": "Your description goes here"
+    }
+  },
+  "cordova-plugin-nativegeocoder": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-nativegeocoder"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-add-swift-support": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-add-swift-support@2.0.2"
+    },
+    "is_top_level": false,
+    "variables": {}
   }
 }
