@@ -1,71 +1,179 @@
-// Start the server by running "node index.js" from the "server" directory
+const firebase = require('firebase')
+require("firebase/firestore");
+let admin = require('firebase-admin')
 
-const express = require('express')
-const app = express()
-const mongo = require('mongodb')
+// Firebase configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyCyAHMfKLXjp9bpxEkBH0vS6dux21HKTJ0",
+    authDomain: "tracealert-94669.firebaseapp.com",
+    databaseURL: "https://tracealert-94669-default-rtdb.firebaseio.com",
+    projectId: "tracealert-94669",
+    storageBucket: "tracealert-94669.appspot.com",
+    messagingSenderId: "529576902686",
+    appId: "1:529576902686:web:e1b9e70671527112cfae0f"
+};
 
-const MongoClient = mongo.MongoClient
-// the place where the database is stored. 
-// Currently the server is localhost
-const dbUrl = 'mongodb://localhost'
-// db is initialised when connecting to database, and will be used for database operations
-let db
-
-MongoClient.connect(dbUrl, (err, client) => {
-    if (err)  throw err
-    // the name of the database is "tracealert"
-    db = client.db('tracealert')
-    // the server is listening on port 3000.
-    app.listen(3000, () => console.log('Server listening on 3000'))
-})
-
+// Initialize Firebase and Admin SDK
+firebase.initializeApp(firebaseConfig);
+var serviceAccount = require("./tracealert-94669-firebase-adminsdk-8o5ym-907dfde87e.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 
-/*
-*** User information resides in the collection named "users"
-* One user per document in "users" collection
-
-*** User should be an object in this format:
-{
-    _id: "",
-    firstname: "",
-    surname: "",
-    dateOfBirth: new Date(1990, 0, 1),
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    atRisk: false,
-    placesAndContacts: [
-        {
-            location: {
-                name: "University of Adelaide",
-                city: "Adelaide",
-                state: "SA",
-                preciseLocation: "Near Ingkarni Wardli",
-            },
-            time: new Date(),
-            contacts: [],
-        },
-        {...},
-        {...},
-    ]
+function setRiskyWeight(userId, weight){
+    admin.firestore().collection('users').doc(userId)
+    .update({riskyWeight: weight})
+    .then(() => {
+        console.log(`riskyWeight of user ${userId} successfully updated!`)
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating user's riskyWeight: ${err}`)
+    })
 }
-*** Note:
- * _id: this does not neet to be provided at first; the databse will randomly generate one;
- * dateOfBirth: a Date object for storing the date of birth. Month is represented as 0-11.
- * placesAndContacts: an array of places the user has been to since 2 weeks ago; "contacts" property stores an array of unique _ids, which are the _ids of the direct contacts which are also users of TraceAlert
-*/
 
-// Add new user as a document into database
-function createNewUser(user){
-    db.collection('users').insert(user, (err, doc) => {
-        if (err){
-            console.log("Error occurred when creating a new user in database: " + err)
-        } else {
-            console.log('New user created. The ID generated is: ' + doc._id)
-        }
+function getRiskyWeight(userId){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId)
+        .get()
+        .then(doc => {
+            resolve(doc.data().riskyWeight)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+// userId: the unique _id used to identify the user in database
+// atRisk: boolean value for indicating whether the user is of high risk
+function updateRiskStatus(userId, atRisk){
+    admin.firestore().collection('users').doc(userId)
+    .update({atRisk: atRisk})
+    .then(() => {
+        console.log(`Risk status of user ${userId} updated to: ${atRisk ? 'dangerous' : 'safe'}`)
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating user's risk status: ${err}`)
+    })
+}
+
+
+// **** Run every 24 hours ****
+function updateRiskParameters(riskLevel, threshold, tiers){
+    admin.firestore().collection('risk_status').doc('parameters')
+    .update({
+        risk_level: riskLevel,
+        threshold: threshold,
+        tiers: tiers
+    })
+    .then(() => {
+        console.log('Risk parameters successfully updated!')
+    })
+    .catch(err => {
+        console.log(`Error occurred when updating risk parameters: ${err}`)
+    })
+}
+
+
+// **** Run every 24 hours ****
+function deleteAllOutdatedContacts(){
+    admin.firestore().collection('users').get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            deleteOutdatedContacts(doc.id)
+            .then(count => {
+                console.log(count + ' outdated contacts deleted for user ' + doc.id)
+            })
+            .catch(err => {
+                console.log(`Error occurred when deleting outdated contacts for user ${doc.id}: ${err}`)
+            })
+        })
+    })
+}
+
+
+function deleteOutdatedContacts(userId){
+    let today = new Date()
+    console.log(`Processing user ${userId}...`)
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
+        .then(querySnapshot => {
+            let countDeleted = 0
+            querySnapshot.forEach(doc => {
+                let newContact = []
+                doc.data().contact.forEach(e => {
+                    let timestamp = e.time.toDate()
+                    let msPassed = Math.abs(today - timestamp)
+                    let daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
+                    if (daysPassed > 14){
+                        console.log(`Days passed: ${daysPassed}`)
+                        countDeleted += 1
+                    } else {
+                        newContact.push(e)
+                    }
+                })
+                if (newContact.length == 0){
+                    admin.firestore().collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    .delete()
+                    .catch(err => {
+                        reject(err)
+                    })
+                } else {
+                    admin.firestore().collection('users').doc(userId).collection('placesAndContacts').doc(doc.id)
+                    .update({contact: newContact})
+                    .catch(err => {
+                        reject(err)
+                    })
+                }
+            })
+            // update contactCount field
+            if (countDeleted != 0){
+                admin.firestore().collection('users').doc(userId).update("contactCount", firebase.firestore.FieldValue.increment(-countDeleted))
+                .then(() => {
+                    console.log('contactCount successfully updated!')
+                })
+                .catch(err => {
+                    console.log('Error occurred when updating contactCount')
+                })
+            }
+            resolve(countDeleted)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+
+// return a list of uid of all direct contacts
+function getDirectContacts(userId){
+    let contacts = {}
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
+        .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                doc.data().contact.forEach(c => {
+                    contacts[c.contactId] = 1
+                })
+            })
+            resolve(Object.keys(contacts))
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+
+function getRiskStatus(userId){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('users').doc(userId).get()
+        .then(doc => {
+            console.log(doc.data().atRisk)
+            resolve(doc.data().atRisk)
+        })
+        .catch(err => {
+            reject('Error occurred when getting risk status: ' + err)
+        })
     })
 }

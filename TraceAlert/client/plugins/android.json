@@ -29,6 +29,9 @@
     },
     "cordova-plugin-nativegeocoder": {
       "PACKAGE_NAME": "com.team27.tracealert"
+    },
+    "cordova-plugin-bluetoothle": {
+      "PACKAGE_NAME": "com.team27.tracealert"
     }
   },
   "dependent_plugins": {

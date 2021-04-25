@@ -18,6 +18,7 @@
 */
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 if (cdvHelpers.getConfigPreference('GradlePluginKotlinEnabled', 'false').toBoolean()) {
     apply plugin: 'kotlin-android'
@@ -344,6 +345,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
 
     if (cdvHelpers.getConfigPreference('GradlePluginKotlinEnabled', 'false').toBoolean()) {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
