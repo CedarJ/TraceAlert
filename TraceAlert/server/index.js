@@ -177,3 +177,56 @@ function getRiskStatus(userId){
         })
     })
 }
+
+//*run every 24hr for every userId*
+//get the riskStatus&riskyWeightCount of the selected user
+//update risky weight by riskstatus&special cases' coefficient
+function adjustRiskyWeight(userId){
+    var rS;
+    var rWC;
+    getRiskStatus(userId)
+    .then(riskStatus=>{
+        rS = riskStatus;
+    })
+    .then(()=>{
+        getDirectContacts(userId)
+        .then(contacts=>{
+            for (let i = 0; i < contacts.length; i++){
+                getRiskyWeight(contacts[i])
+                .then(riskyWeight=>{
+                    rWC += riskyWeight;
+                });
+            }
+        });
+    })
+    .then(()=>{
+        if ((rS == true) && (rWC >= 1000)){
+            setRiskyWeight(userId, 1*3*3);
+        }else if ((rS == true) && (rWC < 1000)){
+            setRiskyWeight(userId, 1*3*1);
+        }else if ((!rS == true) && (rWC >= 1000)){
+            setRiskyWeight(userId, 1*1*3);
+        }else if ((!rS == true) && (rWC < 1000)){
+            setRiskyWeight(userId, 1*1*1);
+        }
+    });
+}
+
+//get the list of Countacts uid
+//return the accumulation of risky weight
+//update risk status by the amount of risky weight count
+function determineUserRisk(userId){
+    var sum;
+    getDirectContacts(userId)
+    .then(contacts=>{
+        for (let i = 0; i < contacts.length; i++){
+            getRiskyWeight(contacts[i])
+            .then(riskyWeight=>{
+                sum += riskyWeight;
+            });
+        }
+    })
+    .then(()=>{
+        updateRiskStatus(userId, (sum >= 420));
+    });
+}
