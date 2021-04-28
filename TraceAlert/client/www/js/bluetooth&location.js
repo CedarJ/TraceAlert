@@ -151,6 +151,7 @@ function initializePeripheralSuccess(result) {
 
 var id = currentUser.uid.substring(0,10);
 
+//Advertising through bluetooth
 function startAdvertising(){
     var naid = "Tracing" + id;
 
@@ -177,7 +178,7 @@ function stopAdvertisingsuccess(result){
 
     startScan();
 }
-
+//Initialize object
 var foundDevices = [];
 
 let contact = {
@@ -218,9 +219,12 @@ function startScan() {
     }, 30000);
 }
 
+//Scan for other devices
 function startScanSuccess(result) {
 
     log("startScanSuccess(" + result.status + ")");
+	
+// Push in the user id with same app
     var rena = result.name;
     if (result.rssi >= -80) {
         if (rena.substring(0,7) === "Tracing") {
@@ -290,6 +294,7 @@ function location(){
     navigator.geolocation.getCurrentPosition(onSuccess, onError, {enableHighAccuracy: true});
 }
 
+//Get location
 function onSuccess(position) {
 
     function success(result) {
