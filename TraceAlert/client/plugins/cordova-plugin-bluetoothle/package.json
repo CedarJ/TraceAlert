@@ -1,0 +1,74 @@
+{
+  "_from": "cordova-plugin-bluetoothle@6.3.1",
+  "_id": "cordova-plugin-bluetoothle@6.3.1",
+  "_inBundle": false,
+  "_integrity": "sha512-k8ao2nLmjwbKxZvgnnj5WzNNrE4LJCRH98Rokr7kaaZ+4wUWSrzrKjeb48av6M68LZ9S7W1P/WKcANrXVGPjUw==",
+  "_location": "/cordova-plugin-bluetoothle",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "cordova-plugin-bluetoothle@6.3.1",
+    "name": "cordova-plugin-bluetoothle",
+    "escapedName": "cordova-plugin-bluetoothle",
+    "rawSpec": "6.3.1",
+    "saveSpec": null,
+    "fetchSpec": "6.3.1"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-bluetoothle/-/cordova-plugin-bluetoothle-6.3.1.tgz",
+  "_shasum": "80ca6085c25f1bf05204dd087ec6d74ba8f04ca2",
+  "_spec": "cordova-plugin-bluetoothle@6.3.1",
+  "_where": "/Users/AlvinWong/Documents/TraceAlert/client",
+  "author": {
+    "name": "Rand Dusing"
+  },
+  "bugs": {
+    "url": "https://github.com/randdusing/cordova-plugin-bluetoothle/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-bluetoothle",
+    "platforms": [
+      "android",
+      "ios",
+      "osx",
+      "windows"
+    ]
+  },
+  "deprecated": false,
+  "description": "Use the Bluetooth Low Energy plugin to connect your Cordova app to new Bluetooth devices like heart rate monitors, thermometers, etc...",
+  "engines": {
+    "cordovaDependencies": {
+      "4.3.0": {
+        "cordova": ">=5.0.0",
+        "cordova-android": ">=5.0.0"
+      },
+      "7.0.0": {
+        "cordova": ">=100"
+      }
+    }
+  },
+  "homepage": "https://github.com/randdusing/cordova-plugin-bluetoothle#readme",
+  "keywords": [
+    "bluetooth",
+    "bluetoothle",
+    "bluetooth le",
+    "cordova",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-windows"
+  ],
+  "license": "MIT",
+  "name": "cordova-plugin-bluetoothle",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/randdusing/cordova-plugin-bluetoothle.git"
+  },
+  "types": "./types/index.d.ts",
+  "version": "6.3.1"
+}
