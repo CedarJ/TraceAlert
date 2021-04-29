@@ -172,6 +172,7 @@ function addNewContact(contact){
     })
 }
 
+
 // returns a Promise
 function getUserInfo() {
     if (!currentUser){
@@ -200,6 +201,7 @@ function getUserInfo() {
     })
 }
 
+
 // returns whether the user is at risk based on the value stored in database
 // function returns a Promise
 function getRiskStatus(){
@@ -215,6 +217,7 @@ function getRiskStatus(){
         })
     })
 }
+
 
 // return a list of locations and contacts in each individual location
 // function returns a promise
@@ -236,6 +239,7 @@ function getContacts(){
         })
     })
 }
+
 
 // returns the total number of contacts in the past 14 days
 // function returns a promise
