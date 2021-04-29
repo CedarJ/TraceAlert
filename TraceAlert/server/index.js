@@ -32,6 +32,7 @@ function setRiskyWeight(userId, weight){
     })
 }
 
+
 function getRiskyWeight(userId){
     return new Promise((resolve, reject) => {
         admin.firestore().collection('users').doc(userId)
@@ -44,6 +45,7 @@ function getRiskyWeight(userId){
         })
     })
 }
+
 
 // userId: the unique _id used to identify the user in database
 // atRisk: boolean value for indicating whether the user is of high risk
