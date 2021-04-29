@@ -106,7 +106,7 @@ function deleteOutdatedContacts(userId){
                     let msPassed = Math.abs(today - timestamp)
                     let daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
                     if (daysPassed > 14){
-                        console.log(`Days passed: ${daysPassed}`)
+//                         console.log(`Days passed: ${daysPassed}`)
                         countDeleted += 1
                     } else {
                         newContact.push(e)
@@ -128,7 +128,7 @@ function deleteOutdatedContacts(userId){
             })
             // update contactCount field
             if (countDeleted != 0){
-                admin.firestore().collection('users').doc(userId).update("contactCount", firebase.firestore.FieldValue.increment(-countDeleted))
+                admin.firestore().collection('users').doc(userId).update("contactCount", admin.firestore.FieldValue.increment(-countDeleted))
                 .then(() => {
                     console.log('contactCount successfully updated!')
                 })
