@@ -8,7 +8,9 @@
       <h2>{{user.firstname}} {{user.surname}}</h2>
 
       <h5>Updated at 2020-04-03 10:00:00</h5>
-      <img src="static/qr.png" width="80%" alt="">
+      <div class="pic">
+        <img :src="qrCodeUrl">
+      </div>
       <p>You have indirect contact with people whohave tested positive for covID-19 within thepast 2 weeks.</p>
       <el-button type="primary">Visit SA Health Website</el-button>
     </div>
@@ -22,9 +24,16 @@ export default {
   components: {
     'app-header': () => import('@/components/header')
   },
+  computed: {
+    qrCodeUrl () {
+      return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Tracing' + this.user.uid.substring(0, 10)
+    }
+  },
   data () {
     return {
-      user: {}
+      user: {
+        uid: ''
+      }
     }
   },
   created () {

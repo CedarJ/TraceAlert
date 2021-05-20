@@ -23,7 +23,7 @@
           </el-form-item>
         </div>
         <el-form-item prop="dateOfBirth">
-          <el-date-picker v-model="form.dateOfBirth" type="date" placeholder="Birthday">
+          <el-date-picker v-model="convertedDateOfBirth" type="date" placeholder="Birthday">
           </el-date-picker>
         </el-form-item>
         <el-form-item prop="address">
@@ -55,6 +55,16 @@
 import { createNewUser } from '@/api/firebase'
 
 export default {
+  computed: {
+    convertedDateOfBirth: {
+      get: () => {
+        return this.form.dateOfBirth.toDateString()
+      },
+      set: (val) => {
+        this.form.dateOfBirth = val
+      }
+    }
+  },
   methods: {
     submit () {
       this.$refs['form'].validate((valid) => {

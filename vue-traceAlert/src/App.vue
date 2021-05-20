@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
-    <app-nav></app-nav>
+    <app-nav v-if="!(currentRouteName == 'Index' || currentRouteName == 'SignIn')"></app-nav>
   </div>
 </template>
 
@@ -10,6 +10,11 @@ export default {
   name: 'App',
   components: {
     'app-nav': () => import('@/components/nav')
+  },
+  computed: {
+    currentRouteName () {
+      return this.$route.name
+    }
   }
 }
 </script>

@@ -179,9 +179,10 @@ export function getUserInfo () {
       .then(doc => {
         let record = doc.data()
         let userInfo = {
+          uid: currentUser.uid,
           firstname: record.firstname,
           surname: record.surname,
-          dateOfBirth: getdate(Date(record.dateOfBirth)),
+          dateOfBirth: record.dateOfBirth.toDate().toDateString(),
           phone: record.phone,
           email: record.email,
           address: record.address,

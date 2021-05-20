@@ -2,7 +2,7 @@
   <div>
     <div class="nav-wrap">
       <ul class="nav">
-        <li class="nav-li" v-for="(item, index) in nav" :key="index" :class="item.text === selectedTab? 'bg-red' : ''">
+        <li class="nav-li" v-for="(item, index) in nav" :key="index" :class="item.text === selectedTab? 'bg-selected' : ''">
           <div class="nav-li-icon">
             <i :class="item.icon"></i>
           </div>
@@ -87,7 +87,7 @@ export default {
     text-decoration: none;
 }
 
-.bg-red {
-  background-color: red;
+.bg-selected {
+  background-color: #2c0076;
 }
 </style>
