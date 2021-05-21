@@ -182,7 +182,7 @@ export function getUserInfo () {
           uid: currentUser.uid,
           firstname: record.firstname,
           surname: record.surname,
-          dateOfBirth: record.dateOfBirth.toDate().toDateString(),
+          dateOfBirth: new Date(record.dateOfBirth).toDateString(),
           phone: record.phone,
           email: record.email,
           address: record.address,

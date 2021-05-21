@@ -11,7 +11,7 @@
       <div class="pic">
         <img :src="qrCodeUrl">
       </div>
-      <p>You have indirect contact with people whohave tested positive for covID-19 within thepast 2 weeks.</p>
+      <p>You have indirect contact with people who have tested positive for COVID-19 within the past 2 weeks.</p>
       <el-button type="primary">Visit SA Health Website</el-button>
     </div>
   </div>

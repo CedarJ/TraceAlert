@@ -58,6 +58,9 @@ export default {
   computed: {
     convertedDateOfBirth: {
       get: () => {
+        if (!this.form) {
+          return null
+        }
         return this.form.dateOfBirth.toDateString()
       },
       set: (val) => {
