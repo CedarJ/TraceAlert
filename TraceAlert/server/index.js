@@ -22,59 +22,115 @@ admin.initializeApp({
 
 
 function setRiskyWeight(userId, weight){
-    admin.firestore().collection('users').doc(userId)
-    .update({riskyWeight: weight})
-    .then(() => {
-        console.log(`riskyWeight of user ${userId} successfully updated!`)
-    })
-    .catch(err => {
-        console.log(`Error occurred when updating user's riskyWeight: ${err}`)
-    })
+    if (userId == null){
+        console.log('Error occurred when setting risky weight: userId was not passed')
+    } else if (weight == null){
+        console.log('Error occurred when setting risky weight: weight was not passed')
+    } else if (typeof userId != 'string' || typeof weight != 'number'){
+        console.log('Error occurred when setting risky weight: wrong types of parameters')
+    } else {
+        admin.firestore().collection('users').doc(userId)
+        .update({riskyWeight: weight})
+        .then(() => {
+            console.log(`riskyWeight of user ${userId} successfully updated!`)
+        })
+        .catch(err => {
+            console.log(`Error occurred when updating user's riskyWeight: ${err}`)
+        })
+    }
 }
 
 
 function getRiskyWeight(userId){
-    return new Promise((resolve, reject) => {
-        admin.firestore().collection('users').doc(userId)
-        .get()
-        .then(doc => {
-            resolve(doc.data().riskyWeight)
+    if (userId == null){
+        console.log('userId cannot be null')
+    } else if (typeof userId != 'string'){
+        console.log('userId is of invalid type')
+    } else {
+        return new Promise((resolve, reject) => {
+            admin.firestore().collection('users').doc(userId)
+            .get()
+            .then(doc => {
+                if (doc.exists){
+                    resolve(doc.data().riskyWeight)
+                } else {
+                    console.log('This user does not exist')
+                    resolve()
+                }
+            })
+            .catch(err => {
+                reject(err)
+            })
         })
-        .catch(err => {
-            reject(err)
-        })
-    })
+    }
 }
 
 
 // userId: the unique _id used to identify the user in database
 // atRisk: boolean value for indicating whether the user is of high risk
 function updateRiskStatus(userId, atRisk){
-    admin.firestore().collection('users').doc(userId)
-    .update({atRisk: atRisk})
-    .then(() => {
-        console.log(`Risk status of user ${userId} updated to: ${atRisk ? 'dangerous' : 'safe'}`)
-    })
-    .catch(err => {
-        console.log(`Error occurred when updating user's risk status: ${err}`)
-    })
+    if (userId == null){
+        console.log('Error occurred when updating risk status: the userId is not specified')
+    } else if (atRisk == null){
+        console.log('Error occurred when updating risk status: atRisk is not specified')
+    } else if (typeof userId != 'string' || typeof atRisk != 'boolean'){
+        console.log('Error occurred when updating risk status: arguments are of the wrong types')
+    } else {
+        admin.firestore().collection('users').doc(userId)
+        .update({atRisk: atRisk})
+        .then(() => {
+            console.log(`Risk status of user ${userId} updated to: ${atRisk ? 'dangerous' : 'safe'}`)
+        })
+        .catch(err => {
+            console.log(`Error occurred when updating user's risk status: ${err}`)
+        })
+    }
 }
 
 
 // **** Run every 24 hours ****
 function updateRiskParameters(riskLevel, threshold, tiers){
-    admin.firestore().collection('risk_status').doc('parameters')
-    .update({
-        risk_level: riskLevel,
-        threshold: threshold,
-        tiers: tiers
-    })
-    .then(() => {
-        console.log('Risk parameters successfully updated!')
-    })
-    .catch(err => {
-        console.log(`Error occurred when updating risk parameters: ${err}`)
-    })
+    if (riskLevel == null){
+        console.log('No parameter specified')
+    } else if (threshold == null && typeof riskLevel == 'string'){
+        admin.firestore().collection('risk_status').doc('parameters')
+        .update({
+            risk_level: riskLevel,
+        })
+        .then(() => {
+            console.log('Risk level successfully updated!')
+        })
+        .catch(err => {
+            console.log(`Error occurred when updating risk level: ${err}`)
+        })
+    } else if (tiers == null && typeof riskLevel == 'string' && typeof threshold == 'number'){
+        admin.firestore().collection('risk_status').doc('parameters')
+        .update({
+            risk_level: riskLevel,
+            threshold: threshold,
+        })
+        .then(() => {
+            console.log('Risk level and threshold successfully updated!')
+        })
+        .catch(err => {
+            console.log(`Error occurred when updating risk level and threshold: ${err}`)
+        })
+    } else if ((riskLevel != null && typeof riskLevel != 'string') || (threshold != null && typeof threshold != 'number') || (tiers != null && typeof tiers != 'number')){
+        console.log('Error occurred when updating risk parameters: wrong types of arguments being passed')
+    } else {
+        admin.firestore().collection('risk_status').doc('parameters')
+        .update({
+            risk_level: riskLevel,
+            threshold: threshold,
+            tiers: tiers
+        })
+        .then(() => {
+            console.log('Risk parameters successfully updated!')
+        })
+        .catch(err => {
+            console.log(`Error occurred when updating risk parameters: ${err}`)
+        })
+    }
 }
 
 
@@ -108,7 +164,6 @@ function deleteOutdatedContacts(userId){
                     let msPassed = Math.abs(today - timestamp)
                     let daysPassed = Math.ceil(msPassed / (1000 * 60 * 60 * 24))
                     if (daysPassed > 14){
-//                         console.log(`Days passed: ${daysPassed}`)
                         countDeleted += 1
                     } else {
                         newContact.push(e)
@@ -149,35 +204,53 @@ function deleteOutdatedContacts(userId){
 
 // return a list of uid of all direct contacts
 function getDirectContacts(userId){
-    let contacts = {}
-    return new Promise((resolve, reject) => {
-        admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                doc.data().contact.forEach(c => {
-                    contacts[c.contactId] = 1
-                })
+    if (userId == null){
+        console.log('Error occurred when getting direct contacts: no userId provided')
+    } else {
+        let contacts = {}
+        return new Promise((resolve, reject) => {
+            admin.firestore().collection('users').doc(userId).get()
+            .then((doc) => {
+                if (!doc.exists){
+                    console.log('Error occurred when getting direct contacts: the userId does not exist')
+                    resolve()
+                } else {
+                    admin.firestore().collection('users').doc(userId).collection('placesAndContacts').get()
+                    .then(querySnapshot => {
+                        querySnapshot.forEach(doc => {
+                            doc.data().contact.forEach(c => {
+                                contacts[c.contactId] = 1
+                            })
+                        })
+                        resolve(Object.keys(contacts))
+                    })
+                    .catch(err => {
+                        reject(err)
+                    })
+                }
             })
-            resolve(Object.keys(contacts))
         })
-        .catch(err => {
-            reject(err)
-        })
-    })
+    }
 }
 
 
 function getRiskStatus(userId){
-    return new Promise((resolve, reject) => {
-        admin.firestore().collection('users').doc(userId).get()
-        .then(doc => {
-            console.log(doc.data().atRisk)
-            resolve(doc.data().atRisk)
+    if (userId == null){
+        console.log('Error occurred when updating risk status: userId is not provided')
+    } else if (typeof userId != 'string'){
+        console.log('Error occurred when updating risk status: userId is of the wrong type')
+    } else {
+        return new Promise((resolve, reject) => {
+            admin.firestore().collection('users').doc(userId).get()
+            .then(doc => {
+                console.log(doc.data().atRisk)
+                resolve(doc.data().atRisk)
+            })
+            .catch(err => {
+                reject('Error occurred when getting risk status: ' + err)
+            })
         })
-        .catch(err => {
-            reject('Error occurred when getting risk status: ' + err)
-        })
-    })
+    }
 }
 
 //*run every 24hr for every userId*
