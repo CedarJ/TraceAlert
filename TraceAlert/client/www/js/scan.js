@@ -87,13 +87,13 @@ function setContact(text){
     contact_qr.contact.push(infoma);
     if (contact_qr.locationInfo.name == "") {
       alert("Please scan again!");
-      alert(JSON.stringify(contact_qr));
+      //alert(JSON.stringify(contact_qr));
       setTimeout(QRScanner.scan(displayContents), 1000);
     }
     else
     {
-      //addNewContact(contact_qr);
-      alert(JSON.stringify(contact_qr));
+      addNewContact(contact_qr);
+      //alert(JSON.stringify(contact_qr));
       alert('Add success');
       pageTransition(qr_page);
     }
