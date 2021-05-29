@@ -1,5 +1,5 @@
 function bluetoothIntialize(){
-    alert(currentUser.uid.substring(0,10));
+    //alert(currentUser.uid.substring(0,10));
     new Promise(function (resolve) {
 
         bluetoothle.initialize(resolve, { 
@@ -189,8 +189,8 @@ function startBlScan() {
 
         log("Stopped");
         if (contact_bl.contact.length != 0) {
-            //addNewContact(contact_bl);
-            alert(JSON.stringify(contact_bl));
+            addNewContact(contact_bl);
+            //alert(JSON.stringify(contact_bl));
         }
         alert("BT test: " + JSON.stringify(contact_bl));
         contact_bl = {
