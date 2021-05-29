@@ -192,7 +192,7 @@ function startBlScan() {
             addNewContact(contact_bl);
             //alert(JSON.stringify(contact_bl));
         }
-        alert("BT test: " + JSON.stringify(contact_bl));
+        //alert("BT test: " + JSON.stringify(contact_bl));
         contact_bl = {
         locationInfo: {
             name: "",
