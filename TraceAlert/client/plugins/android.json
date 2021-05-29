@@ -30,7 +30,10 @@
     "cordova-plugin-nativegeocoder": {
       "PACKAGE_NAME": "com.team27.tracealert"
     },
-    "cordova-plugin-bluetoothle": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.team27.tracealert"
+    },
+    "cordova-plugin-qrscanner": {
       "PACKAGE_NAME": "com.team27.tracealert"
     }
   },
