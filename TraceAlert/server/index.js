@@ -87,6 +87,45 @@ function updateRiskStatus(userId, atRisk){
     }
 }
 
+function getRiskLevel(){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('risk_status').doc('parameters')
+        .get()
+        .then(doc => {
+            resolve(doc.data().risk_level)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+function getThreshold(){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('risk_status').doc('parameters')
+        .get()
+        .then(doc => {
+            resolve(doc.data().threshold)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+function getTiers(){
+    return new Promise((resolve, reject) => {
+        admin.firestore().collection('risk_status').doc('parameters')
+        .get()
+        .then(doc => {
+            resolve(doc.data().tiers)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
 
 // **** Run every 24 hours ****
 function updateRiskParameters(riskLevel, threshold, tiers){
