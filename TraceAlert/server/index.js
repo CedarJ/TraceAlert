@@ -296,8 +296,11 @@ function getRiskStatus(userId){
 //get the riskStatus&riskyWeightCount of the selected user
 //update risky weight by riskstatus&special cases' coefficient
 function adjustRiskyWeight(userId){
-    var rS;
-    var rWC;
+    var rS; //risk status
+    var rWC; //risky weight count
+    var cRS; //coefficient risk status
+    var cSC; //coefficient special case
+    var t; //threshold
     getRiskStatus(userId)
     .then(riskStatus=>{
         rS = riskStatus;
@@ -314,23 +317,54 @@ function adjustRiskyWeight(userId){
         });
     })
     .then(()=>{
-        if ((rS == true) && (rWC >= 1000)){
-            setRiskyWeight(userId, 1*3*3);
-        }else if ((rS == true) && (rWC < 1000)){
-            setRiskyWeight(userId, 1*3*1);
-        }else if ((!rS == true) && (rWC >= 1000)){
-            setRiskyWeight(userId, 1*1*3);
-        }else if ((!rS == true) && (rWC < 1000)){
-            setRiskyWeight(userId, 1*1*1);
+        getRiskLevel()
+        .then(riskLevel=>{
+            switch (riskLevel){
+                case 0:
+                    cRS = 0;
+                    cSC = 0;
+                    break;
+                case 1:
+                    cRS = 10;
+                    cSC = 3;
+                    break;
+                case 2:
+                    cRS = 5;
+                    cSC = 2;
+                    break;
+                case 3:
+                    cRS = 0;
+                    cSC = 0;
+                    break;
+            }
+        });
+    })
+    .then(()=>{
+        getThreshold()
+        .then(threshold=>{
+            t = threshold;
+        });
+    })
+    .then(()=>{
+        if ((rS == true) && (rWC >= 3*t)){
+            setRiskyWeight(userId, 1*cRS*cSC);
+        }else if ((rS == true) && (rWC < 3*t)){
+            setRiskyWeight(userId, 1*cRS*cSC);
+        }else if ((!rS == true) && (rWC >= 3*t)){
+            setRiskyWeight(userId, 1*cRS*cSC);
+        }else if ((!rS == true) && (rWC < 3*t)){
+            setRiskyWeight(userId, 1*cRS*cSC);
         }
     });
 }
+
 
 //get the list of Countacts uid
 //return the accumulation of risky weight
 //update risk status by the amount of risky weight count
 function determineUserRisk(userId){
     var sum;
+    var t; //threshold
     getDirectContacts(userId)
     .then(contacts=>{
         for (let i = 0; i < contacts.length; i++){
@@ -341,6 +375,12 @@ function determineUserRisk(userId){
         }
     })
     .then(()=>{
-        updateRiskStatus(userId, (sum >= 420));
+        getThreshold()
+        .then(threshold=>{
+            t = threshold;
+        });
+    })
+    .then(()=>{
+        updateRiskStatus(userId, (sum >= t));
     });
 }
