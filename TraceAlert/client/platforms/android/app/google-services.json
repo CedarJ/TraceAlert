@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "529576902686",
+    "project_id": "tracealert-94669",
+    "storage_bucket": "tracealert-94669.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529576902686:android:9cad51f4e67c6ca8cfae0f",
+        "android_client_info": {
+          "package_name": "com.team27.tracealert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529576902686-491kr2mb61p7o9orcod4s27t8rplt7j9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3Djsg3-gjDUQxdXCFbE8oBwXlzoCjP7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529576902686-491kr2mb61p7o9orcod4s27t8rplt7j9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

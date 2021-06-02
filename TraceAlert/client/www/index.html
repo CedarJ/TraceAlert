@@ -21,37 +21,201 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
         <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
         <meta http-equiv="Content-Security-Policy" content="default-src *; script-src * 'unsafe-eval' 'unsafe-inline'; connect-src *; img-src *; style-src * 'unsafe-inline' ; media-src *"> 
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width viewport-fit=cover">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <!-- <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover"> -->
         <meta name="color-scheme" content="light dark">
         <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
         <link rel="stylesheet" href="css/index.css">
-        <link href=static/css/app.c793a8910d7ba0fdb29ba94e4fc8e71c.css rel=stylesheet>
-        <title>Hello World</title> 
+        <title>TraceAlert</title> 
     </head>
     <body>
-        <div id=app></div>
+        <div id=app>
+            <div class="top-bar">TraceAlert</div>
+
+            <!-- Homepage -->
+            <div id="homepage" class="page-layout">
+                <div class="homepage-title-container">
+                    <div class="homepage-title">Stay Strong</div>
+                    <div class="homepage-title">Stay Safe</div>
+                </div>
+                <img class="homepage-img" src="img/corona-4960366_1920.jpg">
+                <button onclick="pageTransition(signup_page)">SIGN UP</button>
+                <div class="text-button" onclick="pageTransition(login_page)">Log in</div>
+            </div>
+
+            <!-- Sign up page -->
+            <div id="signup-page" class="page-layout">
+                <div style="display: flex; flex-direction: row; justify-content: start; width: 80vw;"><h1 style="text-align: left; margin-bottom: 30px;">Sign up</h1></div>
+                <form style="width: 95%;">
+                    <div class="input-row">
+                        <input id="firstname-signup" type="text" class="small-input-area" placeholder="firstname" required />
+                        <input id="lastname-signup" type="text" class="small-input-area" placeholder="lastname" required />
+                    </div>
+                    <div style="height: 10px;"></div>
+                    <input id="birth-signup" type="date" class="large-input-area" required />
+                    <div style="height: 10px;"></div>
+                    <input id="phone-signup" type="tel" class="large-input-area" placeholder="phone" required />
+                    <div style="height: 10px;"></div>
+                    <input id="email-signup" type="email" class="large-input-area" placeholder="name@example.com" required />
+                    <div style="height: 10px;"></div>
+                    <input id="password-signup" type="text" class="large-input-area" placeholder="password" required />
+                    <div style="height: 10px;"></div>
+                    <input id="address-signup" type="text" class="large-input-area" placeholder="street" required />
+                    <div style="height: 10px;"></div>
+                    <div class="input-row">
+                        <input id="city-signup" type="text" class="small-input-area" placeholder="city" required />
+                        <select id="state-signup" class="small-input-area" required >
+                            <option value="SA">SA</option>
+                            <option value="NSW">NSW</option>
+                            <option value="Vic">Vic</option>
+                            <option value="ACT">ACT</option>
+                            <option value="Qld">Qld</option>
+                            <option value="NT">NT</option>
+                            <option value="WA">WA</option>
+                            <option value="Tas">Tas</option>
+                        </select>
+                    </div>
+                    <div style="height: 10px;"></div>
+                    <input id="postalCode-signup" type="number" class="large-input-area" placeholder="postal code" required />
+                    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                        <button onclick="processSignup()" type="button">SIGN UP</button>
+                    </div>
+                </form>
+
+                <div class="text-button" onclick="pageTransition(login_page)" style="position: absolute; bottom: 10px;">Already have an account? Log in here.</div>
+            </div>
+
+            <!-- Log In Page -->
+            <div id="login-page" class="page-layout">
+                <div style="display: flex; flex-direction: row; justify-content: start; width: 80vw;"><h1 style="text-align: left;">Sign in</h1></div>
+                <form style="width: 80vw; margin-top: 30px;">
+                    <input type="email" placeholder="Email address" id="email-login" class="large-input-area" required />
+                    <div style="height: 10px;"></div>
+                    <input type="password" id="password-login" placeholder="Password" class="large-input-area" required />
+                </form>
+                <button style="margin-top: 50px;" onclick="processLogin()">log in</button>
+                <div class="text-button" onclick="pageTransition(signup_page)">Sign up</div>
+            </div>
+
+            <!-- QR Page -->
+            <div id="qr-page" class="page-layout">
+                <div class="qr-container">
+                    <img id="qr-code" />
+                </div>
+                <div id="risk-update-date"></div>
+                <div id="risk-indication"></div>
+            </div>
+
+            <!-- Visited Page -->
+            <div id="visited-page" class="page-layout">
+                <div class="visited-title-container">
+                    <div id="visited-locations-since" class="visited-title">Places visited</div>
+                    <div id="visited-locations-since-date" class="visited-title-date"></div>
+                </div>
+                <div class="visited-body" id="visited-body">
+                    <!-- <div class="visited-location-container"></div> -->
+                </div>
+                <div class="visited-footer" id="visited-footer">
+                    <div id="places-count"></div>
+                    <div id="people-count"></div>
+                </div>
+            </div>
+
+            <!-- Information Page -->
+            <div id="information-page" class="page-layout">
+                <div class="namecard">
+                    <img src="img/avatar.png" id="user-image">
+                    <div id="username"></div>
+                </div>
+                <div class="information-body">
+                    <span class="material-icons">cake</span>
+                    <div id="birth"></div>
+                    <span class="material-icons">phone</span>
+                    <div id="phone"></div>
+                    <span class="material-icons">mail</span>
+                    <div id="email"></div>
+                    <span class="material-icons">location_on</span>
+                    <div id="address"></div>
+                </div>
+                <div class="info-edit-button-container">
+                    <button onclick="gotoEditInfoPage()">Edit</button>
+                </div>
+            </div>
+
+            
+            <div class="bottom-bar" id="bottom-bar">
+                <div class="bottom-button-container" onclick="pageTransition(1)" id="visited-page-button">
+                    <span class="material-icons" style="font-size: 30px;">location_on</span>
+                    <div>visited</div>
+                </div>
+                <div class="bottom-button-container" onclick="pageTransition(2)" id="qr-page-button">
+                    <span class="material-icons" style="font-size: 30px;">qr_code</span>
+                    <div>my QR code</div>
+                </div>
+                <div class="bottom-button-container" onclick="pageTransition(3)" id="information-page-button">
+                    <span class="material-icons" style="font-size: 30px;">account_circle</span>
+                    <div>Information</div>
+                </div>
+            </div>
+
+            <!-- Page on top -->
+            <div id="page-on-top">
+                <div class="top-bar" style="margin-left: -20px;">
+                    <span class="material-icons" onclick="goBack()">arrow_back_ios</span>
+                    <div style="margin-left: 15px">TraceAlert</div>
+                </div>
+                <!-- Information Editting Page -->
+                <div class="body-no-bottom-bar" id="edit-page">
+                    <div class="input-row">
+                        <input id="firstname-edit" type="text" class="small-input-area" />
+                        <input id="lastname-edit" type="text" class="small-input-area" />
+                    </div>
+                    <div style="height: 10px;"></div>
+                    <input id="birth-edit" type="date" class="large-input-area" />
+                    <div style="height: 10px;"></div>
+                    <input id="phone-edit" type="tel" class="large-input-area" />
+                    <div style="height: 10px;"></div>
+                    <input id="email-edit" type="email" class="large-input-area" />
+                    <div style="height: 10px;"></div>
+                    <input id="address-edit" type="text" class="large-input-area" />
+                    <div style="height: 10px;"></div>
+                    <div class="input-row">
+                        <input id="city-edit" type="text" class="small-input-area" />
+                        <select id="state-edit" class="small-input-area">
+                            <option value="SA">SA</option>
+                            <option value="NSW">NSW</option>
+                            <option value="Vic">Vic</option>
+                            <option value="ACT">ACT</option>
+                            <option value="Qld">Qld</option>
+                            <option value="NT">NT</option>
+                            <option value="WA">WA</option>
+                            <option value="Tas">Tas</option>
+                        </select>
+                    </div>
+                    <div style="height: 10px;"></div>
+                    <input id="postalCode-edit" type="number" class="large-input-area" />
+                    <button onclick="processInformationUpdate()">SUBMIT</button>
+                </div>
+
+                <div class="body-no-bottom-bar" id="detail-page">
+                    <div class="address-container" id="address-container"></div>
+                    <div class="detail-container" id="detail-container"></div>
+                </div>
+            </div>
+        </div>
         <script src="cordova.js"></script>
-        <script src="js/index.js"></script>
+        <script src="js/navigation.js"></script>
         <script src="js/firebase.js"></script>
-        <script type=text/javascript src=static/js/manifest.d9e6048208af495d80f2.js></script>
-        <script type=text/javascript src=static/js/vendor.a17a78b74f86bcc14bb6.js></script>
-        <script type=text/javascript src=static/js/app.a94120bb00a79dd69360.js></script>
         <script src="js/bluetoothlocation.js"></script>
+        <script src="js/index.js"></script>
     </body>
 </html>
 

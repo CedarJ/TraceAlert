@@ -31,4 +31,6 @@
             <string>need location access to find things nearby</string>
         </edit-config>
     </platform>
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="webviewbounce" value="false" />
 </widget>
