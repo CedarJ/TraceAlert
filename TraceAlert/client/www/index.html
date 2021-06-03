@@ -109,9 +109,22 @@
             <div id="qr-page" class="page-layout">
                 <div class="qr-container">
                     <img id="qr-code" />
+                    <div class="qr-edit-button-container">
+                    <button onclick="pageTransition(cam_page)">Scan</button>
+                    </div>
                 </div>
                 <div id="risk-update-date"></div>
                 <div id="risk-indication"></div>
+            </div>
+
+            <!-- Cam Page -->
+            <div id="cam-page" class="page-layout">
+                <div class="frame-container">
+                    <img id="frame" />
+                    <div class="qr-edit-button-container">
+                    <button onclick="pageTransition(qr_page)">Back</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Visited Page -->
@@ -214,7 +227,8 @@
         <script src="cordova.js"></script>
         <script src="js/navigation.js"></script>
         <script src="js/firebase.js"></script>
-        <script src="js/bluetoothlocation.js"></script>
+        <script src="js/scan.js"></script>
+        <script src="js/bluetooth.js"></script>
         <script src="js/index.js"></script>
     </body>
 </html>
