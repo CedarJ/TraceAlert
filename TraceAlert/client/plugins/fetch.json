@@ -17,6 +17,30 @@
       "GPS_REQUIRED": "false"
     }
   },
+    "cordova-plugin-bluetoothle": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-bluetoothle@6.3.1"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-background-mode-bluetooth-central": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-background-mode-bluetooth-central"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-background-mode-bluetooth-peripheral": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-background-mode-bluetooth-peripheral"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
   "cordova-plugin-bluetooth-peripheral-usage-description": {
     "source": {
       "type": "registry",
@@ -43,10 +67,18 @@
     "is_top_level": false,
     "variables": {}
   },
-  "cordova-plugin-bluetoothle": {
+    "cordova-plugin-device": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-bluetoothle@^6.3.1"
+      "id": "cordova-plugin-device"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-qrscanner": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-qrscanner"
     },
     "is_top_level": true,
     "variables": {}
