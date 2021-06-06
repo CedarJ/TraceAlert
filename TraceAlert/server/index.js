@@ -296,11 +296,11 @@ function getRiskStatus(userId){
 //get the riskStatus&riskyWeightCount of the selected user
 //update risky weight by riskstatus&special cases' coefficient
 function adjustRiskyWeight(userId){
-    var rS; //risk status
-    var rWC; //risky weight count
-    var cRS; //coefficient risk status
-    var cSC; //coefficient special case
-    var t; //threshold
+    var rS;
+    var rWC;
+    var cRS;
+    var cSC;
+    var t;
     getRiskStatus(userId)
     .then(riskStatus=>{
         rS = riskStatus;
@@ -323,18 +323,22 @@ function adjustRiskyWeight(userId){
                 case 0:
                     cRS = 0;
                     cSC = 0;
+                    console.log('Coefficients have been set to 0/0 by risk level ' + riskLevel);
                     break;
                 case 1:
                     cRS = 10;
                     cSC = 3;
+                    console.log('Coefficients have been set to 10/3 by risk level ' + riskLevel);
                     break;
                 case 2:
                     cRS = 5;
                     cSC = 2;
+                    console.log('Coefficients have been set to 5/2 by risk level ' + riskLevel);
                     break;
                 case 3:
-                    cRS = 0;
-                    cSC = 0;
+                    cRS = 1;
+                    cSC = 1;
+                    console.log('Coefficients have been set to 1/1 by risk level ' + riskLevel);
                     break;
             }
         });
@@ -355,6 +359,12 @@ function adjustRiskyWeight(userId){
         }else if ((!rS == true) && (rWC < 3*t)){
             setRiskyWeight(userId, 1*cRS*cSC);
         }
+    })
+    .then(()=>{
+        getRiskyWeight(userId);
+    })
+    .then(riskyWeight=>{
+        console.log('The risk weight of user ' + userId + ' has been adjust to ' + riskyWeight);
     });
 }
 
@@ -364,7 +374,7 @@ function adjustRiskyWeight(userId){
 //update risk status by the amount of risky weight count
 function determineUserRisk(userId){
     var sum;
-    var t; //threshold
+    var t;
     getDirectContacts(userId)
     .then(contacts=>{
         for (let i = 0; i < contacts.length; i++){
@@ -382,5 +392,11 @@ function determineUserRisk(userId){
     })
     .then(()=>{
         updateRiskStatus(userId, (sum >= t));
+    })
+    .then(()=>{
+        getRiskStatus(userId);
+    })
+    .then(atRisk=>{
+        console.log('The risk status of user ‘userId’ has been set to ' + atRisk);
     });
 }
