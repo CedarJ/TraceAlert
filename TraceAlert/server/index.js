@@ -292,18 +292,75 @@ function getRiskStatus(userId){
     }
 }
 
+function setCoefficients(){
+    let cRS = 0; //coeficient risk status
+    let cSC = 0; //coeficient special case
+    getRiskLevel()
+        .then(riskLevel=>{
+            switch (riskLevel){
+                case 0:
+                    cRS = 0;
+                    cSC = 0;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 1:
+                    cRS = 10;
+                    cSC = 3;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 2:
+                    cRS = 5;
+                    cSC = 2;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 3:
+                    cRS = 1;
+                    cSC = 1;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+            }
+        });
+}
+
 //*run every 24hr for every userId*
 //get the riskStatus&riskyWeightCount of the selected user
 //update risky weight by riskstatus&special cases' coefficient
 function adjustRiskyWeight(userId){
-    var rS;
-    var rWC;
-    var cRS;
-    var cSC;
-    var t;
+    let rS = false;
+    let rWC = 0; //risky weight count
+    let cRS = 0; //coeficient risk status
+    let cSC = 0; //coeficient special case
+    let t = 0; //threshold
     getRiskStatus(userId)
     .then(riskStatus=>{
         rS = riskStatus;
+    })
+    .then(()=>{
+        getRiskLevel()
+        .then(riskLevel=>{
+            switch (riskLevel){
+                case 0:
+                    cRS = 0;
+                    cSC = 0;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 1:
+                    cRS = 10;
+                    cSC = 3;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 2:
+                    cRS = 5;
+                    cSC = 2;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+                case 3:
+                    cRS = 1;
+                    cSC = 1;
+                    console.log('Coefficients have been set to ' + cRS + '/' + cSC + ' by risk level ' + riskLevel);
+                    break;
+            }
+        });
     })
     .then(()=>{
         getDirectContacts(userId)
@@ -317,64 +374,29 @@ function adjustRiskyWeight(userId){
         });
     })
     .then(()=>{
-        getRiskLevel()
-        .then(riskLevel=>{
-            switch (riskLevel){
-                case 0:
-                    cRS = 0;
-                    cSC = 0;
-                    console.log('Coefficients have been set to 0/0 by risk level ' + riskLevel);
-                    break;
-                case 1:
-                    cRS = 10;
-                    cSC = 3;
-                    console.log('Coefficients have been set to 10/3 by risk level ' + riskLevel);
-                    break;
-                case 2:
-                    cRS = 5;
-                    cSC = 2;
-                    console.log('Coefficients have been set to 5/2 by risk level ' + riskLevel);
-                    break;
-                case 3:
-                    cRS = 1;
-                    cSC = 1;
-                    console.log('Coefficients have been set to 1/1 by risk level ' + riskLevel);
-                    break;
-            }
-        });
-    })
-    .then(()=>{
         getThreshold()
         .then(threshold=>{
             t = threshold;
         });
-    })
-    .then(()=>{
+    });
+    setTimeout(() => {
         if ((rS == true) && (rWC >= 3*t)){
             setRiskyWeight(userId, 1*cRS*cSC);
         }else if ((rS == true) && (rWC < 3*t)){
-            setRiskyWeight(userId, 1*cRS*cSC);
+            setRiskyWeight(userId, 1*cRS*1);
         }else if ((!rS == true) && (rWC >= 3*t)){
-            setRiskyWeight(userId, 1*cRS*cSC);
+            setRiskyWeight(userId, 1*1*cSC);
         }else if ((!rS == true) && (rWC < 3*t)){
-            setRiskyWeight(userId, 1*cRS*cSC);
+            setRiskyWeight(userId, 1*1*1);
         }
-    })
-    .then(()=>{
-        getRiskyWeight(userId);
-    })
-    .then(riskyWeight=>{
-        console.log('The risk weight of user ' + userId + ' has been adjust to ' + riskyWeight);
-    });
+    }, 3000);
 }
-
 
 //get the list of Countacts uid
 //return the accumulation of risky weight
 //update risk status by the amount of risky weight count
 function determineUserRisk(userId){
-    var sum;
-    var t;
+    let sum = 0; //risky weight count
     getDirectContacts(userId)
     .then(contacts=>{
         for (let i = 0; i < contacts.length; i++){
@@ -383,20 +405,11 @@ function determineUserRisk(userId){
                 sum += riskyWeight;
             });
         }
-    })
-    .then(()=>{
+    });
+    setTimeout(() => {
         getThreshold()
         .then(threshold=>{
-            t = threshold;
-        });
-    })
-    .then(()=>{
-        updateRiskStatus(userId, (sum >= t));
-    })
-    .then(()=>{
-        getRiskStatus(userId);
-    })
-    .then(atRisk=>{
-        console.log('The risk status of user ‘userId’ has been set to ' + atRisk);
-    });
+            updateRiskStatus(userId, (sum >= threshold))
+        })
+    }, 3000);
 }
