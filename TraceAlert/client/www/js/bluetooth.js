@@ -136,7 +136,7 @@ function startAdvertisingSuccess(result){
     log('Advertising succeed');
     log(result.status);
 
-    setTimeout(stopAdvertising, 15000);
+    setTimeout(stopAdvertising, 117000);
 }
 
 function stopAdvertising(){
@@ -201,7 +201,7 @@ function startBlScan() {
         },
             contact: []
         }
-    }, 10000);
+    }, 30000);
 }
 
 //Scan for other devices
