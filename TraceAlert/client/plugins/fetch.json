@@ -67,7 +67,7 @@
     "is_top_level": false,
     "variables": {}
   },
-    "cordova-plugin-device": {
+  "cordova-plugin-device": {
     "source": {
       "type": "registry",
       "id": "cordova-plugin-device"
