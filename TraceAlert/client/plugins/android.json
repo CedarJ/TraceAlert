@@ -7,6 +7,12 @@
     "files": {}
   },
   "installed_plugins": {
+     "cordova-plugin-background-mode-bluetooth-central": {
+      "PACKAGE_NAME": "com.team27.tracealert"
+    },
+    "cordova-plugin-background-mode-bluetooth-peripheral": {
+      "PACKAGE_NAME": "com.team27.tracealert"
+    },
     "cordova-plugin-bluetooth-peripheral-usage-description": {
       "TEXT": "Your description goes here",
       "PACKAGE_NAME": "com.team27.tracealert"
@@ -18,18 +24,21 @@
       "GPS_REQUIRED": "false",
       "PACKAGE_NAME": "com.team27.tracealert"
     },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.team27.tracealert"
+    },
     "cordova-plugin-nativegeocoder": {
       "PACKAGE_NAME": "com.team27.tracealert"
     },
-    "cordova-plugin-whitelist": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.team27.tracealert"
+    },
+    "cordova-plugin-qrscanner": {
       "PACKAGE_NAME": "com.team27.tracealert"
     }
   },
   "dependent_plugins": {
     "cordova-plugin-add-swift-support": {
-      "PACKAGE_NAME": "com.team27.tracealert"
-    },
-    "cordova-plugin-device": {
       "PACKAGE_NAME": "com.team27.tracealert"
     }
   }

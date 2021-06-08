@@ -30,20 +30,12 @@ function onDeviceReady() {
             currentUser = user
             console.log('logged in')
             pageTransition(qr_page)
+            bluetoothIntialize();
         } else {
             console.log('logged out')
             pageTransition(home_page)
         }
     });
-    new Promise(function (resolve) {
-
-        bluetoothle.initialize(resolve, { 
-        	request: true, 
-        	statusReceiver: true,
-            restoreKey : "bluetoothleplugin" 
-        });
-
-    }).then(initializeSuccess, handleError);
 }
 
 

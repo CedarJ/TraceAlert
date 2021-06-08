@@ -1,3 +1,15 @@
+function bluetoothIntialize(){
+    alert(currentUser.uid.substring(0,10));
+    new Promise(function (resolve) {
+
+        bluetoothle.initialize(resolve, { 
+            request: true, 
+            statusReceiver: true,
+            restoreKey : "bluetoothleplugin" 
+        });
+
+    }).then(initializeSuccess, handleError);
+}
 
 function initializeSuccess(result) {
 
@@ -14,7 +26,6 @@ function initializeSuccess(result) {
         log("Bluetooth is not enabled:", "status");
         log(result, "status");
     }
-
     initializePeripheral();
 }
 
@@ -106,7 +117,6 @@ function initializePeripheralSuccess(result) {
         log("Bluetooth peripheral is not enabled:", "status");
         log(result, "status");
     }
-
     startAdvertising();
 }
 
@@ -123,7 +133,7 @@ function startAdvertising(){
 }
 
 function startAdvertisingSuccess(result){
-    console.log('Advertising succeed');
+    log('Advertising succeed');
     log(result.status);
 
     setTimeout(stopAdvertising, 1170000);
@@ -134,84 +144,115 @@ function stopAdvertising(){
 }
 
 function stopAdvertisingsuccess(result){
-    console.log('Advertising stopped');
+    log('Advertising stopped');
     log(result.status);
 
-    startScan();
+    //setTimeout(startAdvertising, 5000);
+    startBlScan();
 }
+
 //Initialize object
 var foundDevices = [];
+var road_bl = "";
+var areas_bl = "";
+var city_bl = "";
+var states_bl = "";
 
-let contact = {
+function startBlScan() {
+
+    log("Starting scan for devices...");//, "status");
+    foundDevices = [];
+    contact_bl = {
+            locationInfo: {
+                name: "",
+                city: "",
+                state: "",
+            },
+        contact: []
+    }
+
+    getLocation();
+    
+    bluetoothle.startScan(startScanSuccess, handleError, { services: [] });
+
+    setTimeout(function() {
+        stopScan();
+
+        contact_bl = {
+            locationInfo: {
+                name: road_bl,
+                city: city_bl,
+                state: states_bl,
+            },
+            contact: []
+        }
+
+        log("Stopped");
+        if (contact_bl.contact.length != 0) {
+            //addNewContact(contact_bl);
+            alert(JSON.stringify(contact_bl));
+        }
+        alert("BT test: " + JSON.stringify(contact_bl));
+        contact_bl = {
         locationInfo: {
             name: "",
             city: "",
             state: "",
         },
-        contact: []
-    }
-
-var road = "";
-var areas = "";
-var city = "";
-var states = "";
-
-
-function startScan() {
-
-    log("Starting scan for devices...", "status");
-
-    foundDevices = [];
-
-    getLocation();
-
-    contact.locationInfo.name = road;
-    contact.locationInfo.city = city;
-    contact.locationInfo.state = states;
-
-    bluetoothle.startScan(startScanSuccess, handleError, { services: [] });
-
-    setTimeout(function() {
-        stopScan();
-        console.log('Stopped');
-        if (contact.locationInfo.name != "") {
-            addNewContact(contact);
+            contact: []
         }
     }, 30000);
 }
 
 //Scan for other devices
 function startScanSuccess(result) {
-
-    log("startScanSuccess(" + result.status + ")");
+    log("startScanSuccess");
 	
 // Push in the user id with same app
     var rena = result.name;
     if (result.rssi >= -80) {
         if (rena.substring(0,7) === "Tracing") {
 
-            var infoma = {
+            var infoma_bl = {
                         contactId: (rena.substring(7)),
                         time: new Date(),
-                        preciseLocation: (areas),
+                        preciseLocation: (areas_bl),
                     }
             var duplicate = true;
 
-            for (var i = 0; i < contact.contact.length; i++) {
-                if (rena.substring(7) = contact.contact[i].name) {
+            for (var i = 0; i < contact_bl.contact.length; i++) {
+                if (rena.substring(7) = contact_bl.contact[i].name) {
                     duplicate = false;
                     break;
                 }
             }
             if (duplicate) {
-                contact.contact.push(infoma);
+                contact_bl.contact.push(infoma_bl);
             }
         }
+        /*------------------------------------------------
+        var infoma = {
+                        contactId: (rena.substring(7)),
+                        time: new Date(),
+                        preciseLocation: (areas_bl),
+                    }
+            var duplicate = true;
+
+            for (var i = 0; i < contact_bl.contact.length; i++) {
+                if (rena.substring(7) = contact_bl.contact[i].name) {
+                    duplicate = false;
+                    break;
+                }
+            }
+            if (duplicate) {
+                contact_bl.contact.push(infoma);
+            }
+        ------------------------------------------------*/
     }
 
     if (result.status === "scanStarted") {
 
-        log("Scanning for devices (will continue to scan until you select a device)...", "status");
+        log("Scanning for devices (will continue to scan until you select a device)...");
     }
     else if (result.status === "scanResult") {
 
@@ -245,7 +286,7 @@ function stopScanSuccess() {
     }
     else {
 
-        log("Found " + foundDevices.length + " devices.", "status");
+        log("Found " + foundDevices.length + " devices.");
     }
 
     startAdvertising();
@@ -260,10 +301,10 @@ function onSuccess(position) {
 
     function success(result) {
     var codeResult = result[0];
-    road = codeResult.thoroughfare +  ' ' + codeResult.subThoroughfare;
-    areas = codeResult.areasOfInterest;
-    city = codeResult.locality;
-    states = codeResult.administrativeArea;
+    road_bl = codeResult.thoroughfare +  ' ' + codeResult.subThoroughfare;
+    areas_bl = codeResult.areasOfInterest;
+    city_bl = codeResult.locality;
+    states_bl = codeResult.administrativeArea;
     
     console.log("Result: " + JSON.stringify(codeResult));
     }
@@ -274,7 +315,7 @@ function onSuccess(position) {
 
     nativegeocoder.reverseGeocode(success, failure, position.coords.latitude, position.coords.longitude, { useLocale: true, maxResults: 1 });
 
-    console.log("navigator.geolocation works well");
+    log("navigator.geolocation works well");
 
 }
 

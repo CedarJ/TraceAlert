@@ -5,6 +5,7 @@ let information_page = 3
 let login_page = 4
 let signup_page = 5
 let home_page = 6
+let cam_page = 7
 
 function pageTransition(page){
     removeOldPage(current_page)
@@ -12,7 +13,7 @@ function pageTransition(page){
         document.querySelectorAll('.visited-location-container').forEach(n => n.remove())
     }
     current_page = page
-    if (current_page == home_page || current_page == login_page || current_page == signup_page){
+    if (current_page == home_page || current_page == login_page || current_page == signup_page || current_page == cam_page){
         document.getElementById('bottom-bar').style.display = 'none'
     } else {
         document.getElementById('bottom-bar').style.display = 'grid'
@@ -48,7 +49,18 @@ function pageTransition(page){
             toSignupPage()
             break
         }
+        case cam_page:
+        {
+            toCamPage()
+            break
+        }
     }
+}
+
+function toCamPage(){
+    document.getElementById("cam-page").style.display = "flex"
+    document.getElementById('frame').src = "./img/frame.png"
+    startQRScan()
 }
 
 function toLoginPage(){
@@ -152,7 +164,7 @@ function toQrPage(){
     let date = new Date()
     document.getElementById('risk-update-date').innerHTML = "Updated on "+ date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate()
     
-    document.getElementById('qr-code').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + currentUser.uid.substring(0, 10)
+    document.getElementById('qr-code').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Tracing" + currentUser.uid.substring(0, 10)
 
     getRiskStatus().then(risk => {
         if (risk){
@@ -200,6 +212,13 @@ function removeOldPage(page){
         case signup_page:
         {
             document.getElementById('signup-page').style.display = "none"
+            break
+        }
+            
+        case cam_page:
+        {
+            document.getElementById('cam-page').style.display = "none"
+            QRStop()
             break
         }
     }
