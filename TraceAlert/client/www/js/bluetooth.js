@@ -136,7 +136,7 @@ function startAdvertisingSuccess(result){
     log('Advertising succeed');
     log(result.status);
 
-    setTimeout(stopAdvertising, 117000);
+    setTimeout(stopAdvertising, 1170000);
 }
 
 function stopAdvertising(){
