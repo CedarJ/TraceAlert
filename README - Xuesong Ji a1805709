@@ -1,0 +1,9 @@
+I was responsible for develop an epidemic trace & alert algorism for the TraceAlert project.
+
+I have spent an average of 12 hours a week on this project.
+
+I have written the agenda for the third and fifth client meeting, and the minutes for the third client meeting.
+
+For milestone 1, I designed and implemented algorithms for risk propagation and determination. Which is in the ‘Team-27/TraceAlert/server/index.js’.
+
+For milestone 2, I added the parameter control system, designed, and completed the test. The testing code can be found in the ‘Team-27/Testing files and results/Jest - database functions - unit testing/testIndex_1805709.js’.
